@@ -4,7 +4,6 @@ from const import window_height, window_width, title
 
 window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption(title)
-scroll = 0
 bg_images = []
 for i in range(1, 5):
     bg_image = pygame.image.load(f"sprite/bg_{i}.png").convert_alpha()
@@ -14,11 +13,13 @@ for i in range(1, 5):
 def draw_bg(window):
     new_width = window.get_width()
     new_height = window.get_height()
-    scaled_images = [pygame.transform.scale(i, (new_width, new_height)) for i in bg_images]
+    scaled_images = [pygame.transform.scale(
+        i, (new_width, new_height)) for i in bg_images]
 
     for x in range(5):
         for i, scaled_image in enumerate(scaled_images):
-            window.blit(scaled_image, ((x * new_width) - scroll, 0))
+            window.blit(scaled_image, ((x * new_width), 0))
+
 
 def load_animation(image_path, sprite_width, sprite_height, num_frames):
     # Cargar la imagen del sprite
@@ -59,6 +60,7 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     is_falling = False
     fall_count = 0
     fall_height = 70
+    frame_speed = sprite_speed
 
     # Llamar a la función floor() para obtener el piso
     floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
@@ -68,11 +70,6 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
-        key = pygame.key.get_pressed()
-        if key[pygame.K_LEFT]:
-         scroll -= 5
-        if key[pygame.K_RIGHT]:
-          scroll += 5
         # Detectar si se presiona la tecla espacio para saltar o caer
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not is_jumping and not is_falling:
@@ -86,10 +83,9 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             if jump_count < jump_height:
                 y -= int(jump_speed)
                 jump_count += 1
-                if frame_count % 2 == 0:
+                if frame_count % frame_speed == 0:
                     jump_frame_index = (
                         jump_frame_index + 1) % len(jump_frames)
-                    frame_count = 0
                 window.blit(run_frames[run_frame_index], (x, y))
             else:
                 is_jumping = False
@@ -99,10 +95,9 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             if fall_count < fall_height:
                 y += int(math.sin(math.radians(fall_count)) * jump_speed)
                 fall_count += 1
-                if frame_count % 2 == 0:
+                if frame_count % frame_speed == 0:
                     jump_frame_index = (
                         jump_frame_index + 1) % len(jump_frames)
-                    frame_count = 0
                 window.blit(jump_frames[jump_frame_index], (x, y))
             else:
                 is_falling = False
@@ -110,13 +105,13 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
                 y = floor_rect.top - 120
         else:
             frame_count += 1
-            if frame_count % 10 == 0:
+            if frame_count % frame_speed == 0:
                 run_frame_index = (run_frame_index + 1) % len(run_frames)
                 frame_count = 0
             window.blit(run_frames[run_frame_index], (x, y))
 
         # Actualizar el piso en la ventana
-        window.blit(floor_surface, floor_rect)
+        window.blit(floor_surface,floor_rect)
 
         # Actualizar la pantalla
         pygame.display.update()

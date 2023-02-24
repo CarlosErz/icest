@@ -11,7 +11,7 @@ FPS = 80
 run_frames = load_animation('sprite/Tibu_run.png', 120, 120, 7)
 jump_frames = load_animation('sprite/Tibu_jump.png', 120, 120, 1)
 floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
-sprite_speed = 7
+sprite_speed = 8
 x, y = 50, floor_rect.top - 120
 window = pygame.display.set_mode((window_width, window_height))
 
