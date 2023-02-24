@@ -1,0 +1,2 @@
+#ignora los archuvos cache de tu juego y los archivos .pyc
+*.pyc
