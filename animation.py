@@ -12,13 +12,13 @@ for i in range(1, 5):
 
 
 def draw_bg(window):
-    for x in range(5):
-        for i in bg_images:
-            new_width = window.get_width()
-            new_height = window.get_height()
-            scaled_image = pygame.transform.scale(i, (new_width, new_height))
-            window.blit(scaled_image, ((x * new_width) - scroll, 0))
+    new_width = window.get_width()
+    new_height = window.get_height()
+    scaled_images = [pygame.transform.scale(i, (new_width, new_height)) for i in bg_images]
 
+    for x in range(5):
+        for i, scaled_image in enumerate(scaled_images):
+            window.blit(scaled_image, ((x * new_width) - scroll, 0))
 
 def load_animation(image_path, sprite_width, sprite_height, num_frames):
     # Cargar la imagen del sprite
@@ -37,7 +37,7 @@ def floor(window, floor_image_path):
     # Configurar el suelo
     floor_surface = pygame.image.load(floor_image_path)
 
-    # Duplicar la imagen del suelo por todo el largo de la ventana}
+    # Duplicar la imagen del suelo por todo el largo de la ventana
     num_copies = math.ceil(window.get_width() / floor_surface.get_width())
     floor_surface = pygame.transform.scale2x(floor_surface)
     floor_surface = pygame.transform.scale(
@@ -55,13 +55,12 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     is_jumping = False
     jump_count = 0
     jump_height = 30
-    jump_speed = 7
+    jump_speed = 3
     is_falling = False
     fall_count = 0
     fall_height = 70
 
     # Llamar a la función floor() para obtener el piso
-
     floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
     # Mostrar la animación hasta que se cierre la ventana
     while True:
@@ -69,8 +68,6 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
-        draw_bg(window)
-
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT]:
          scroll -= 5
@@ -82,6 +79,9 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             is_jumping = True
             jump_count = 0
             jump_speed = 7
+
+        draw_bg(window)
+
         if is_jumping:
             if jump_count < jump_height:
                 y -= int(jump_speed)
@@ -110,7 +110,7 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
                 y = floor_rect.top - 120
         else:
             frame_count += 1
-            if frame_count % 15 == 0:
+            if frame_count % 10 == 0:
                 run_frame_index = (run_frame_index + 1) % len(run_frames)
                 frame_count = 0
             window.blit(run_frames[run_frame_index], (x, y))

@@ -6,12 +6,12 @@ pygame.display.set_caption(title)
 pygame.init()
 
 clock = pygame.time.Clock()
-FPS = 60
+FPS = 80
 
 run_frames = load_animation('sprite/Tibu_run.png', 120, 120, 7)
-jump_frames = load_animation('sprite/Tibu_jump.png', 120, 120, 3)
+jump_frames = load_animation('sprite/Tibu_jump.png', 120, 120, 1)
 floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
-sprite_speed = 0.1
+sprite_speed = 7
 x, y = 50, floor_rect.top - 120
 window = pygame.display.set_mode((window_width, window_height))
 

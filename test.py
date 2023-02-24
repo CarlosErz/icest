@@ -28,7 +28,6 @@ while run:
 
     clock.tick(FPS)
     draw_bg()
-
     key=pygame.key.get_pressed()
     if key[pygame.K_LEFT]:
         scroll -=5
