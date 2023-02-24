@@ -5,12 +5,13 @@ from const import window_height, window_width, title
 window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption(title)
 bg_images = []
+scroll = 0
 for i in range(1, 5):
     bg_image = pygame.image.load(f"sprite/bg_{i}.png").convert_alpha()
     bg_images.append(bg_image)
 
 
-def draw_bg(window):
+def draw_bg(window, scroll):
     new_width = window.get_width()
     new_height = window.get_height()
     scaled_images = [pygame.transform.scale(
@@ -18,7 +19,10 @@ def draw_bg(window):
 
     for x in range(5):
         for i, scaled_image in enumerate(scaled_images):
-            window.blit(scaled_image, ((x * new_width), 0))
+            # calcular la posición horizontal de la imagen de fondo
+            pos_x = x * new_width - (scroll % new_width)
+
+            window.blit(scaled_image, (pos_x, 0))
 
 
 def load_animation(image_path, sprite_width, sprite_height, num_frames):
@@ -61,6 +65,8 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     fall_count = 0
     fall_height = 70
     frame_speed = sprite_speed
+    scroll_speed = 5
+    scroll=0
 
     # Llamar a la función floor() para obtener el piso
     floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
@@ -76,8 +82,8 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             is_jumping = True
             jump_count = 0
             jump_speed = 7
-
-        draw_bg(window)
+        scroll += scroll_speed
+        draw_bg(window, scroll)
 
         if is_jumping:
             if jump_count < jump_height:
@@ -111,7 +117,7 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             window.blit(run_frames[run_frame_index], (x, y))
 
         # Actualizar el piso en la ventana
-        window.blit(floor_surface,floor_rect)
+        window.blit(floor_surface, floor_rect)
 
         # Actualizar la pantalla
         pygame.display.update()
