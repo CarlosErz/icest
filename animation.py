@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 from const import window_height, window_width, title
 
 window = pygame.display.set_mode((window_width, window_height))
@@ -60,31 +61,83 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     is_jumping = False
     jump_count = 0
     jump_height = 30
-    jump_speed = 3
+    jump_speed = 7
     is_falling = False
     fall_count = 0
     fall_height = 70
     frame_speed = sprite_speed
     scroll_speed = 5
-    scroll=0
+    scroll = 0
+    score = 0
+    rect_x = window_width
+    rect_y = 300
+    rect_width = 50
+    rect_height = 50
+    rect_speed = -5
+    score_text = None
+    score_rect = None
+    rect = pygame.Rect(rect_x, rect_y, rect_width, rect_height)
 
+    # Definir el tiempo de inicio
+    start_time = pygame.time.get_ticks()
+
+    # Configurar la fuente y el tamaño del texto
+    font = pygame.font.SysFont('Comic Sans MS', 30)
+    
+    # Obtener el rectángulo del texto
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    score_rect = score_text.get_rect()
+
+    # Establecer la posición del rectángulo del texto en la parte superior central de la ventana
+    score_rect.centerx = window.get_rect().centerx
+    score_rect.top = 10
+    
     # Llamar a la función floor() para obtener el piso
     floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
+    casco = pygame.image.load('sprite/cascopts.png')
+    character_rect = pygame.Rect(
+        x, y, run_frames[0].get_width(), run_frames[0].get_height())
+
     # Mostrar la animación hasta que se cierre la ventana
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
-        # Detectar si se presiona la tecla espacio para saltar o caer
+
+        # Actualizar el puntaje
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        
+        # Detectar si se presiona la tecla
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not is_jumping and not is_falling:
             is_jumping = True
             jump_count = 0
-            jump_speed = 7
+            jump_speed = 10
         scroll += scroll_speed
+
+        # Mostrar el fondo
         draw_bg(window, scroll)
 
+        elapsed_time = pygame.time.get_ticks() - start_time
+        # Detectar si ha pasado el tiempo suficiente para aumentar el contador
+
+        if elapsed_time > 1000:
+            score += 1
+            start_time = pygame.time.get_ticks()
+            # Actualizar la variable de tiempo inicial
+
+        if character_rect.colliderect(rect):
+            score += 3
+            rect_x = window_width
+            rect_y = random.randint(100, 400)
+        # Mover y mostrar el rectángulo
+        rect_x = (rect_x + rect_speed) % window_width
+        casco_rect = casco.get_rect()
+        rect = pygame.Rect(rect_x, rect_y, rect_width, rect_height)
+        window.blit(casco, rect)
+
+        # Mostrar la animación de correr
         if is_jumping:
             if jump_count < jump_height:
                 y -= int(jump_speed)
@@ -116,8 +169,20 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
                 frame_count = 0
             window.blit(run_frames[run_frame_index], (x, y))
 
+         # Actualizar el rectángulo del personaje
+        character_rect.x = x
+        character_rect.y = y
+
+        # Dibujar el rectángulo del personaje (solo para fines de depuración)
+        # pygame.draw.rect(window, (255, 0, 0), character_rect, 2)
+
         # Actualizar el piso en la ventana
         window.blit(floor_surface, floor_rect)
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        # Actualizar la posición del rectángulo del puntaje
+        score_rect.centerx = window.get_rect().centerx
+        window.blit(score_text, score_rect)
 
         # Actualizar la pantalla
         pygame.display.update()
+        pygame.display.flip()
