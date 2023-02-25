@@ -1,10 +1,12 @@
 import pygame
 import math
 import random
+import sys
 from const import window_height, window_width, title
 
 window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption(title)
+
 bg_images = []
 scroll = 0
 for i in range(1, 5):
@@ -52,7 +54,7 @@ def floor(window, floor_image_path):
     return floor_surface, floor_rect
 
 
-def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
+def show_running_animation(window, run_frames, jump_frames, x, y):
     # Configurar la animación
     clock = pygame.time.Clock()
     run_frame_index = 0
@@ -65,6 +67,7 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     is_falling = False
     fall_count = 0
     fall_height = 70
+    sprite_speed = 5
     frame_speed = sprite_speed
     scroll_speed = 5
     scroll = 0
@@ -76,8 +79,12 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     rect_speed = -5
     score_text = None
     score_rect = None
+    object_speed = 5
+    last_spike_time = 0
+    spike_interval = 2000  # Aparecerá un nuevo rectángulo de picos cada 2 segundos
+    active_spikes = [] 
     rect = pygame.Rect(rect_x, rect_y, rect_width, rect_height)
-
+    
     # Definir el tiempo de inicio
     start_time = pygame.time.get_ticks()
 
@@ -95,9 +102,37 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
     # Llamar a la función floor() para obtener el piso
     floor_surface, floor_rect = floor(window, 'sprite/floor25.png')
     casco = pygame.image.load('sprite/cascopts.png')
+    object_image = pygame.image.load('sprite/picos.png')
+    object_rect = object_image.get_rect()
+    object_rect.bottom = floor_rect.bottom -60
+    object_rect.left = window_width
     character_rect = pygame.Rect(
         x, y, run_frames[0].get_width(), run_frames[0].get_height())
+    character_rect = pygame.Rect(
+        x, y, run_frames[0].get_width(), run_frames[0].get_height())
+    
+      # Establecer la posición del rectángulo del texto en el centro de la ventana
+    text_rect = pygame.Rect(0, 0, 400, 200)
+    text_rect.center = window.get_rect().center
+    # Creamos una pantalla de inicio con un mensaje y una imagen de fondo
+    start_font = pygame.font.Font('freesansbold.ttf', 32)
+    start_text = start_font.render('Presiona Enter para jugar', True, (255, 255, 255))
+    start_text_rect = start_text.get_rect()
+    start_text_rect.center = (window_width // 2, window_height // 2)
 
+    # Mostrar la pantalla de inicio hasta que se presione Enter
+    while True:
+        window.blit(start_text, start_text_rect)
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:    
+                     if event.key == pygame.K_x or event.key == pygame.K_ESCAPE:pygame.quit()
+                    # El usuario ha presionado Enter, rompemos el bucle y comenzamos el juego
+                     break
+        else:
+            continue
+        break
     # Mostrar la animación hasta que se cierre la ventana
     while True:
         for event in pygame.event.get():
@@ -107,7 +142,7 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
 
         # Actualizar el puntaje
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
-        
+        object_rect.left -= object_speed
         # Detectar si se presiona la tecla
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and not is_jumping and not is_falling:
@@ -116,6 +151,13 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             jump_speed = 10
         scroll += scroll_speed
 
+        if pygame.time.get_ticks() - last_spike_time > spike_interval:
+            # Genera un nuevo rectángulo de picos
+            new_spike_rect = object_rect.copy()
+            new_spike_rect.bottom = floor_rect.bottom - 60
+            new_spike_rect.left = window_width
+            active_spikes.append(new_spike_rect)
+            last_spike_time = pygame.time.get_ticks()
         # Mostrar el fondo
         draw_bg(window, scroll)
 
@@ -127,13 +169,18 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
             start_time = pygame.time.get_ticks()
             # Actualizar la variable de tiempo inicial
 
+            #si toca los picos pierde  condicionalidad de game over 
+        for spike_rect in active_spikes:
+            if character_rect.colliderect(spike_rect):
+                print("Game Over")
+                return
         if character_rect.colliderect(rect):
             score += 3
             rect_x = window_width
             rect_y = random.randint(100, 400)
+
         # Mover y mostrar el rectángulo
         rect_x = (rect_x + rect_speed) % window_width
-        casco_rect = casco.get_rect()
         rect = pygame.Rect(rect_x, rect_y, rect_width, rect_height)
         window.blit(casco, rect)
 
@@ -178,10 +225,34 @@ def show_running_animation(window, run_frames, jump_frames, sprite_speed, x, y):
 
         # Actualizar el piso en la ventana
         window.blit(floor_surface, floor_rect)
+        for spike_rect in active_spikes:
+            spike_rect.left -= object_speed    
+            window.blit(object_image, spike_rect)   
         score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         # Actualizar la posición del rectángulo del puntaje
         score_rect.centerx = window.get_rect().centerx
         window.blit(score_text, score_rect)
+        if score > 20:
+            scroll_speed = 7
+            sprite_speed = 7
+            rect_speed = -7
+            spike_interval = 1500
+        if score > 30:
+            scroll_speed = 10
+            sprite_speed = 10
+            spike_interval = 1000
+            rect_speed = -10
+        if score > 50:
+            scroll_speed = 15
+            sprite_speed = 15
+            spike_interval = 1000
+            rect_speed = -15
+        if score > 80:
+            scroll_speed = 20
+            sprite_speed = 20
+            spike_interval = 3000
+            rect_speed = -20
+
 
         # Actualizar la pantalla
         pygame.display.update()
