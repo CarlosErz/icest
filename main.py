@@ -1,4 +1,5 @@
 import pygame
+from cam import *
 from const import window_height, window_width, title
 from animation import load_animation, show_running_animation, floor, draw_bg
 window = pygame.display.set_mode((window_width, window_height))
