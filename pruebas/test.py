@@ -8,12 +8,13 @@ FPS = 60
 
 window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption(title)
-scroll = 0 
-scroll_speed = 5 # velocidad de desplazamiento del fondo
+scroll = 0
+scroll_speed = 5  # velocidad de desplazamiento del fondo
 bg_images = []
 for i in range(1, 5):
     bg_image = pygame.image.load(f"sprite/bg_{i}.png").convert_alpha()
     bg_images.append(bg_image)
+
 
 def draw_bg(window, scroll):
     new_width = window.get_width()
@@ -29,6 +30,7 @@ def draw_bg(window, scroll):
             # dibujar la imagen de fondo en la posición calculada
             window.blit(scaled_image, (pos_x, 0))
 
+
 run = True
 while run:
     clock.tick(FPS)
@@ -36,12 +38,11 @@ while run:
     # Actualizar la variable 'scroll' para mover el fondo
     scroll += scroll_speed
 
-    draw_bg(window,scroll)
+    draw_bg(window, scroll)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
     pygame.display.update()
-
 pygame.quit()
