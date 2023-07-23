@@ -1,10 +1,10 @@
 # Icest - Juego del Dinosaurio con Animaciones de Personaje Universitario
 
-[![tibu-02.png](https://i.postimg.cc/x801GbmB/tibu-02.png)](https://postimg.cc/2bKYry2x)
 
 ## Descripción
 
 Icest es un emocionante juego inspirado en el famoso juego del dinosaurio de Google, pero con un toque especial. En lugar de controlar al clásico dinosaurio, ahora tendrás el personaje de nuestra universidad, Icest, como protagonista. Salta, esquiva obstáculos y diviértete en esta aventura sin fin.
+
 
 ## Características principales
 
@@ -16,6 +16,7 @@ Icest es un emocionante juego inspirado en el famoso juego del dinosaurio de Goo
 
 ## Capturas de pantalla
 
+[![tibu-02.png](https://i.postimg.cc/x801GbmB/tibu-02.png)](https://postimg.cc/2bKYry2x)
 
 ## Cómo instalar
 ``
