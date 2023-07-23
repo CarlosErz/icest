@@ -19,9 +19,10 @@ Icest es un emocionante juego inspirado en el famoso juego del dinosaurio de Goo
 
 
 ## Cómo instalar
-``
+`
 pip install -r requirements.txt
-``
+`
+Para instalar las dependencias necesarias para el juego, ejecuta el siguiente comando:
 ## Iniciar juego
 ``
 python3 main.py
@@ -29,5 +30,5 @@ python3 main.py
 
 
 
-Para instalar las dependencias necesarias para el juego, ejecuta el siguiente comando:
+
 
