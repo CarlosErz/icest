@@ -16,9 +16,6 @@ Icest es un emocionante juego inspirado en el famoso juego del dinosaurio de Goo
 
 ## Capturas de pantalla
 
-![Captura de pantalla 1](ruta/de/captura1.png) <!-- Agrega capturas de pantalla del juego en acción -->
-![Captura de pantalla 2](ruta/de/captura2.png)
-<!-- Puedes agregar más capturas de pantalla para mostrar diferentes escenas del juego -->
 
 ## Cómo instalar
 ``
@@ -26,7 +23,7 @@ pip install -r requirements.txt
 ``
 ## Iniciar juego
 ``
-pip install -r requirements.txt
+python3 main.py
 ``
 
 
